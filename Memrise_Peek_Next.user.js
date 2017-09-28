@@ -1,12 +1,12 @@
 // ==UserScript==
-// @name           Memrise Peak Next
+// @name           Memrise Peek Next
 // @namespace      https://github.com/cooljingle
 // @description    Lets you see the upcoming word in advance
 // @match          https://www.memrise.com/course/*/garden/*
 // @match          https://www.memrise.com/garden/review/*
 // @version        0.0.1
-// @updateURL      https://github.com/cooljingle/memrise-peak-next/raw/master/Memrise_Peak_Next.user.js
-// @downloadURL    https://github.com/cooljingle/memrise-peak-next/raw/master/Memrise_Peak_Next.user.js
+// @updateURL      https://github.com/cooljingle/memrise-peek-next/raw/master/Memrise_Peek_Next.user.js
+// @downloadURL    https://github.com/cooljingle/memrise-peek-next/raw/master/Memrise_Peek_Next.user.js
 // @grant          none
 // ==/UserScript==
 
@@ -18,7 +18,7 @@ $(document).ready(function() {
         return function() {
             _.each(g.box_types, function(box_type) {
                 if(box_type !== g.box_types.EndOfSessionBox) {
-                    peakWords(box_type);
+                    peekWords(box_type);
                 }
             });
             var result = cached_function.apply(this, arguments);
@@ -27,7 +27,7 @@ $(document).ready(function() {
         };
     }());
 
-    function peakWords(box_type) {
+    function peekWords(box_type) {
         box_type.prototype.activate = (function() {
             var cached_function = box_type.prototype.activate;
             return function() {
