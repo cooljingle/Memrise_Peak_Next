@@ -4,7 +4,7 @@
 // @description    Lets you see the upcoming word in advance
 // @match          https://www.memrise.com/course/*/garden/*
 // @match          https://www.memrise.com/garden/review/*
-// @version        0.0.3
+// @version        0.0.4
 // @updateURL      https://github.com/cooljingle/memrise-peek-next/raw/master/Memrise_Peek_Next.user.js
 // @downloadURL    https://github.com/cooljingle/memrise-peek-next/raw/master/Memrise_Peek_Next.user.js
 // @grant          none
@@ -49,7 +49,7 @@ $(document).ready(function() {
     }
 
     function getWord(learnable) {
-        var learnableDef = learnable && g.learnables[learnable.learnable_id].definition;
+        var learnableDef = learnable && learnable.learnable_id && g.learnables[learnable.learnable_id].definition;
         return learnableDef && learnableDef.kind === "text" && learnableDef.value;
     }
 
