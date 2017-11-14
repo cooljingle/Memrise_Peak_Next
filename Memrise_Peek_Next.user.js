@@ -4,7 +4,7 @@
 // @description    Lets you see the upcoming word in advance
 // @match          https://www.memrise.com/course/*/garden/*
 // @match          https://www.memrise.com/garden/review/*
-// @version        0.0.4
+// @version        0.0.5
 // @updateURL      https://github.com/cooljingle/memrise-peek-next/raw/master/Memrise_Peek_Next.user.js
 // @downloadURL    https://github.com/cooljingle/memrise-peek-next/raw/master/Memrise_Peek_Next.user.js
 // @grant          none
@@ -16,29 +16,27 @@ $(document).ready(function() {
     b.load = (function() {
         var cached_function = b.load;
         return function() {
-            _.each(g.box_types, function(box_type) {
-                if(box_type !== g.box_types.EndOfSessionBox) {
-                    peekWords(box_type);
-                }
-            });
+            peekWords();
             var result = cached_function.apply(this, arguments);
             enableNoReverseTranslations();
             return result;
         };
     }());
 
-    function peekWords(box_type) {
-        box_type.prototype.activate = (function() {
-            var cached_function = box_type.prototype.activate;
+    function peekWords() {
+        MEMRISE.garden.boxes.activate_box = (function() {
+            var cached_function = MEMRISE.garden.boxes.activate_box;
             return function() {
                 var result = cached_function.apply(this, arguments);
-                var currentWord = getWord(this.learnable);
-                var nextWord = getNextWord(this.learnable_id);
-                if(currentWord)
-                    $('.garden-box input, .garden-box .choices').before(`<div>${currentWord}</div>`);
-                if(nextWord)
-                    $('.garden-box input, .garden-box .choices').after(`<div>${nextWord}</div>`);
-                return result;
+                if(this.current().template !== "end_of_session") {
+                    var currentWord = getWord(this.current().learnable);
+                    var nextWord = getNextWord(this.current().learnable_id);
+                    if(currentWord)
+                        $('.garden-box input, .garden-box .choices').before(`<div>${currentWord}</div>`);
+                    if(nextWord)
+                        $('.garden-box input, .garden-box .choices').after(`<div>${nextWord}</div>`);
+                    return result;
+                }
             };
         }());
     }
