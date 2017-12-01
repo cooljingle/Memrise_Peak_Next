@@ -4,7 +4,7 @@
 // @description    Lets you see the upcoming word in advance
 // @match          https://www.memrise.com/course/*/garden/*
 // @match          https://www.memrise.com/garden/review/*
-// @version        0.0.5
+// @version        0.0.6
 // @updateURL      https://github.com/cooljingle/memrise-peek-next/raw/master/Memrise_Peek_Next.user.js
 // @downloadURL    https://github.com/cooljingle/memrise-peek-next/raw/master/Memrise_Peek_Next.user.js
 // @grant          none
@@ -32,9 +32,9 @@ $(document).ready(function() {
                     var currentWord = getWord(this.current().learnable);
                     var nextWord = getNextWord(this.current().learnable_id);
                     if(currentWord)
-                        $('.garden-box input, .garden-box .choices').before(`<div>${currentWord}</div>`);
+                        $('.garden-box input, .garden-box .choices').before(`<div style="font-size: 18px">${currentWord}</div>`);
                     if(nextWord)
-                        $('.garden-box input, .garden-box .choices').after(`<div>${nextWord}</div>`);
+                        $('.garden-box input, .garden-box .choices').after(`<div style="font-size: 18px">${nextWord}</div>`);
                     return result;
                 }
             };
