@@ -4,17 +4,16 @@
 // @description    Lets you see the upcoming word in advance
 // @match          https://www.memrise.com/course/*/garden/*
 // @match          https://www.memrise.com/garden/review/*
-// @version        0.0.6
+// @version        0.0.7
 // @updateURL      https://github.com/cooljingle/memrise-peek-next/raw/master/Memrise_Peek_Next.user.js
 // @downloadURL    https://github.com/cooljingle/memrise-peek-next/raw/master/Memrise_Peek_Next.user.js
 // @grant          none
 // ==/UserScript==
 
 $(document).ready(function() {
-    var g = MEMRISE.garden,
-        b = g.boxes;
-    b.load = (function() {
-        var cached_function = b.load;
+    var g = MEMRISE.garden;
+    g.session_start = (function() {
+        var cached_function = g.session_start;
         return function() {
             peekWords();
             var result = cached_function.apply(this, arguments);
@@ -23,26 +22,34 @@ $(document).ready(function() {
         };
     }());
 
+    var prevBoxIndex = 0;
+
     function peekWords() {
-        MEMRISE.garden.boxes.activate_box = (function() {
-            var cached_function = MEMRISE.garden.boxes.activate_box;
+        MEMRISE.garden.session.box_factory.make = (function() {
+            var cached_function = MEMRISE.garden.session.box_factory.make;
             return function() {
                 var result = cached_function.apply(this, arguments);
-                if(this.current().template !== "end_of_session") {
-                    var currentWord = getWord(this.current().learnable);
-                    var nextWord = getNextWord(this.current().learnable_id);
+                if(result.template !== "end_of_session") {
+                    var currentWord = getWord(result);
+                    var nextWord = getNextWord(result);
                     if(currentWord)
-                        $('.garden-box input, .garden-box .choices').before(`<div style="font-size: 18px">${currentWord}</div>`);
+                        window.setTimeout(() => $('.garden-box input, .garden-box .choices').before(`<div style="font-size: 18px">${currentWord}</div>`), 0);
                     if(nextWord)
-                        $('.garden-box input, .garden-box .choices').after(`<div style="font-size: 18px">${nextWord}</div>`);
+                        window.setTimeout(() => $('.garden-box input, .garden-box .choices').after(`<div style="font-size: 18px">${nextWord}</div>`), 0);
+
                     return result;
                 }
             };
         }());
     }
 
-    function getNextWord(prevLearnableId) {
-        var nextLearnable = _.find(b._list.slice(b.num + 1, -1), box => prevLearnableId !== box.learnable_id);
+    function getBoxIndex(learnable) {
+        return _.findIndex(MEMRISE.garden.session_data.boxes, d => d.learnable_id === learnable.learnable_id);
+    }
+
+    function getNextWord(prevLearnable) {
+        prevBoxIndex = Math.max(prevBoxIndex, getBoxIndex(prevLearnable));
+        var nextLearnable = MEMRISE.garden.session_data.boxes[prevBoxIndex + 1]; //best we can do now the internal _list of boxes is no longer avaiable to us
         return getWord(nextLearnable);
     }
 
