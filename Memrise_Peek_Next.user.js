@@ -4,7 +4,7 @@
 // @description    Lets you see the upcoming word in advance
 // @match          https://www.memrise.com/course/*/garden/*
 // @match          https://www.memrise.com/garden/review/*
-// @version        0.0.8
+// @version        0.0.9
 // @updateURL      https://github.com/cooljingle/memrise-peek-next/raw/master/Memrise_Peek_Next.user.js
 // @downloadURL    https://github.com/cooljingle/memrise-peek-next/raw/master/Memrise_Peek_Next.user.js
 // @grant          none
@@ -14,15 +14,10 @@ $(document).ready(function() {
     var g = MEMRISE.garden,
         b;
 
-    g.session_start = (function() {
-        var cached_function = g.session_start;
-        return function() {
-            peekWords();
-            var result = cached_function.apply(this, arguments);
-            enableNoReverseTranslations();
-            return result;
-        };
-    }());
+    g._events.start.push(() => {
+        peekWords();
+        enableNoReverseTranslations();
+    });
 
     var boxIndex = -1;
 
